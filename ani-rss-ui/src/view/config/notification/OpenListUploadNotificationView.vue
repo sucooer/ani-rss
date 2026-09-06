@@ -18,6 +18,11 @@
     </SettingsItem>
     <SettingsItem label="图片大小限制">
       <div>
+        <el-checkbox
+            v-model="notificationConfig['openListUploadImage']"
+            label="同步图片"
+        />
+        <br/>
         <el-input-number
             v-model="notificationConfig['openListUploadImageMaxSize']"
             :min="0"

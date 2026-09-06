@@ -254,6 +254,12 @@ public class NotificationConfig implements Serializable {
     private String openListUploadOvaPath;
 
         /**
+         * OpenList 是否同步图片
+         */
+        @Schema(description = "OpenList 是否同步图片")
+        private Boolean openListUploadImage;
+
+        /**
          * OpenList 图片最大上传大小，单位 KiB，0 表示不限制
          */
         @Schema(description = "OpenList 图片最大上传大小(KiB)，0 表示不限制")
@@ -375,6 +381,7 @@ public class NotificationConfig implements Serializable {
                 .setOpenListUploadApiKey("")
                 .setOpenListUploadPath("/115/Media/番剧/${title}/Season ${season}")
                 .setOpenListUploadOvaPath("/115/Media/剧场版/${title}")
+                .setOpenListUploadImage(true)
                 .setOpenListUploadImageMaxSize(0L)
                 .setOpenListUploadDeleteLocalFile(false)
                 .setOpenListUploadDeleteOldEpisode(false);

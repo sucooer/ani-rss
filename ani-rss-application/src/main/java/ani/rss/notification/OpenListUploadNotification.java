@@ -281,6 +281,10 @@ public class OpenListUploadNotification implements BaseNotification {
         boolean nfo = isNfoFormat(name);
         boolean image = FileUtils.isImageFormat(name);
 
+        if (image && Boolean.FALSE.equals(notificationConfig.getOpenListUploadImage())) {
+            return false;
+        }
+
         if (metadataOnly) {
             return nfo || image;
         }
