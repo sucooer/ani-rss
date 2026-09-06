@@ -216,6 +216,8 @@ public class ConfigUtil {
                 .setTmdbIdPlexMode(false)
                 .setProxyList(proxyList)
                 .setScrape(false)
+                .setScrapeImage(true)
+                .setScrapeImageOnlyMainFanart(false)
                 .setFollowDay(14)
                 .setBangumiIniEnabled(false)
                 .setReplace(false)

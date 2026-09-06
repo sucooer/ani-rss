@@ -274,6 +274,10 @@ public class ScrapeService {
                 })
                 .limit(4)
                 .toList();
+        if (Boolean.TRUE.equals(CONFIG.getScrapeImageOnlyMainFanart())) {
+            // 仅刮削主背景图，跳过额外背景图
+            backdrops = List.of();
+        }
         for (int i = 0; i < backdrops.size(); i++) {
             TmdbImage tmdbImage = backdrops.get(i);
             String filePath = tmdbImage.getFilePath();

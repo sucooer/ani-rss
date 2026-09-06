@@ -678,6 +678,18 @@ public class Config implements Serializable {
     @Schema(description = "刮削开关")
     private Boolean scrape;
 
+    /**
+     * 刮削图片开关
+     */
+    @Schema(description = "刮削图片开关")
+    private Boolean scrapeImage;
+
+    /**
+     * 仅刮削主背景图
+     */
+    @Schema(description = "仅刮削主背景图")
+    private Boolean scrapeImageOnlyMainFanart;
+
     @Schema(description = "追更天数")
     private Integer followDay;
 
