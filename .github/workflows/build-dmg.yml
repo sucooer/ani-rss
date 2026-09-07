@@ -20,7 +20,9 @@ jobs:
           echo "version=v$version" >> $GITHUB_ENV
       - name: Create DMG
         run: |
-          bash ./ani-rss-application/target/ani-rss-macos-main/create-dmg.sh
+          # 兼容 ani-rss-macos 新旧两版 create-dmg.sh：
+          # 旧版忽略参数（jar 已由构建复制进 app）；新版要求传入 <ani-rss.jar> 路径
+          bash ./ani-rss-application/target/ani-rss-macos-main/create-dmg.sh ./ani-rss-application/target/ani-rss.jar
       - name: Release
         uses: softprops/action-gh-release@v3
         with:
