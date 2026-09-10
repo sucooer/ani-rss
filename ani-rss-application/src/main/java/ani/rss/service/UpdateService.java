@@ -19,6 +19,12 @@ import java.io.File;
 @RequiredArgsConstructor
 public class UpdateService {
 
+    /**
+     * 更新源仓库 注意: fork 版本指向自己的仓库, 避免更新检测到原作者的版本
+     */
+    private static final String UPDATE_OWNER = "sucooer";
+    private static final String UPDATE_REPO = "ani-rss";
+
     private final GithubService githubService;
 
     /**
@@ -40,7 +46,7 @@ public class UpdateService {
 
             String filename = currentFile.isJar() ? "ani-rss.jar" : "ani-rss.exe";
 
-            UpdateInfo updateInfo = githubService.getUpdateInfo("wushuo894", "ani-rss", filename, version);
+            UpdateInfo updateInfo = githubService.getUpdateInfo(UPDATE_OWNER, UPDATE_REPO, filename, version);
 
             BeanUtil.copyProperties(updateInfo, about, "version");
         } catch (Exception e) {

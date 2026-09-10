@@ -54,7 +54,7 @@
     <div v-if="about.update">
       <div>
         <SettingsItem label="版本号">
-          <el-link type="default" :href="`https://github.com/wushuo894/ani-rss/releases/tag/v${about.latest}`"
+          <el-link type="default" :href="`https://github.com/sucooer/ani-rss/releases/tag/v${about.latest}`"
                    target="_blank">
             {{ about.latest }}
           </el-link>

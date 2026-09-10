@@ -8,7 +8,7 @@ JAR_FILE_NAME="ani-rss.jar"
 JAR_FILE=$FOLDER$JAR_FILE_NAME
 
 if [ ! -f $JAR_FILE ]; then
-    URL="https://github.com/wushuo894/ani-rss/releases/latest/download/ani-rss.jar"
+    URL="https://github.com/sucooer/ani-rss/releases/latest/download/ani-rss.jar"
     wget -O $JAR_FILE $URL
 
     if [ $? -eq 0 ]; then
