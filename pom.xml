@@ -5,7 +5,7 @@
 
     <groupId>ani.rss</groupId>
     <artifactId>ani-rss</artifactId>
-    <version>3.2.32</version>
+    <version>3.2.36</version>
 
     <name>ani-rss</name>
     <inceptionYear>2025</inceptionYear>
@@ -17,8 +17,11 @@
 
     <packaging>pom</packaging>
     <properties>
-        <java.version>17</java.version>
+        <java.version>25</java.version>
+        <lombok.version>1.18.48</lombok.version>
+        <hutool.version>5.8.47</hutool.version>
         <spring-ai.version>2.0.0</spring-ai.version>
+        <jlibtorrent.version>2.0.12.9</jlibtorrent.version>
     </properties>
 
     <modules>
@@ -76,9 +79,9 @@
                 <version>1.23.2</version>
             </dependency>
             <dependency>
-                <groupId>org.eclipse</groupId>
-                <artifactId>bittorrent</artifactId>
-                <version>0.3.0-v20070627-1030</version>
+                <groupId>com.dampcake</groupId>
+                <artifactId>bencode</artifactId>
+                <version>1.4.1</version>
             </dependency>
 
             <!-- Swagger -->

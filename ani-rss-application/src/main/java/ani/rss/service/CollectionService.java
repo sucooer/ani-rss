@@ -10,10 +10,7 @@ import ani.rss.entity.torrent.TorrentsInfo;
 import ani.rss.entity.torrent.qBittorrentTorrentsInfo;
 import ani.rss.enums.StringEnum;
 import ani.rss.util.basic.HttpReq;
-import ani.rss.util.other.ConfigUtil;
-import ani.rss.util.other.ItemsUtil;
-import ani.rss.util.other.RenameUtil;
-import ani.rss.util.other.TorrentUtil;
+import ani.rss.util.other.*;
 import cn.hutool.core.codec.Base64;
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.io.FileUtil;
@@ -26,7 +23,6 @@ import cn.hutool.core.util.ReUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.http.HttpResponse;
 import lombok.extern.slf4j.Slf4j;
-import org.eclipse.bittorrent.TorrentFile;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
@@ -48,11 +44,10 @@ public class CollectionService {
      */
     public void startCollection(CollectionInfo collectionInfo) {
         String torrent = collectionInfo.getTorrent();
-        File tempFile = FileUtil.createTempFile();
-        Base64.decodeToFile(torrent, tempFile);
-        TorrentFile torrentFile;
+        File tempFile = getTorrentFile(torrent);
+        TorrentMetadata torrentFile;
         try {
-            torrentFile = new TorrentFile(tempFile);
+            torrentFile = TorrentMetadata.from(tempFile);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -65,7 +60,7 @@ public class CollectionService {
         download(name, tempFile, downloadPath, List.of("ANI-RSS合集下载", subgroup));
 
         TorrentsInfo torrentsInfo = new TorrentsInfo()
-                .setHash(torrentFile.getHexHash());
+                .setHash(torrentFile.getHash());
 
         List<qBittorrentTorrentsInfo.FileEntity> files = new ArrayList<>();
         for (int i = 0; i < 5; i++) {
@@ -108,7 +103,7 @@ public class CollectionService {
                 if (!reNameMap.containsKey(oldPath)) {
                     if (!reNameMap.containsValue(oldPath) && file.getPriority() > 0) {
                         qBittorrent.postApi("/api/v2/torrents/filePrio")
-                                .form("hash", torrentFile.getHexHash())
+                                .form("hash", torrentFile.getHash())
                                 .form("id", file.getIndex())
                                 .form("priority", 0)
                                 .thenFunction(HttpResponse::isOk);
@@ -117,7 +112,7 @@ public class CollectionService {
                 }
                 log.info("重命名 {} ==> {}", oldPath, newPath);
                 qBittorrent.postApi("/api/v2/torrents/renameFile")
-                        .form("hash", torrentFile.getHexHash())
+                        .form("hash", torrentFile.getHash())
                         .form("oldPath", oldPath)
                         .form("newPath", newPath)
                         .thenFunction(HttpResponse::isOk);
@@ -220,11 +215,10 @@ public class CollectionService {
      */
     public List<Item> preview(CollectionInfo collectionInfo) {
         String torrent = collectionInfo.getTorrent();
-        File tempFile = FileUtil.createTempFile();
-        Base64.decodeToFile(torrent, tempFile);
-        TorrentFile torrentFile;
+        File tempFile = getTorrentFile(torrent);
+        TorrentMetadata torrentFile;
         try {
-            torrentFile = new TorrentFile(tempFile);
+            torrentFile = TorrentMetadata.from(tempFile);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -320,5 +314,27 @@ public class CollectionService {
                 })
                 .filter(Objects::nonNull)
                 .toList();
+    }
+
+    /**
+     * 根据合集来源生成种子文件，磁力链接会由 jlibtorrent 自动获取元数据。
+     *
+     * @param torrent Base64 种子内容或磁力链接
+     * @return 本地种子文件
+     */
+    private File getTorrentFile(String torrent) {
+        Assert.notBlank(torrent, "请选择种子文件或输入磁力链接");
+        if (StrUtil.startWithIgnoreCase(torrent, "magnet:?")) {
+            try {
+                return MagnetTorrentUtil.resolve(torrent);
+            } catch (Exception e) {
+                throw new RuntimeException("磁力链接解析失败: " + e.getMessage(), e);
+            }
+        }
+
+        // 上传的种子仍沿用原有 Base64 数据格式。
+        File tempFile = FileUtil.createTempFile();
+        Base64.decodeToFile(torrent, tempFile);
+        return tempFile;
     }
 }
