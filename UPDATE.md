@@ -1,2 +1,2 @@
-- refactor: 默认点击封面操作改为编辑订阅
-- refactor: 优化移动端布局
+- feat: 邮箱通知支持配置多个收件人
+- refactor: 优化下载列表

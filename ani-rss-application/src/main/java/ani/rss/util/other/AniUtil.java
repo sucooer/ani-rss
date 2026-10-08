@@ -2,6 +2,7 @@ package ani.rss.util.other;
 
 import ani.rss.commons.FileUtils;
 import ani.rss.commons.GsonStatic;
+import ani.rss.config.DefaultAniFactory;
 import ani.rss.entity.*;
 import ani.rss.entity.dto.RssToAniDTO;
 import ani.rss.entity.torrent.TorrentsInfo;
@@ -15,7 +16,6 @@ import ani.rss.util.basic.HttpReq;
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.bean.copier.CopyOptions;
 import cn.hutool.core.date.DatePattern;
-import cn.hutool.core.date.DateTime;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.io.resource.ResourceUtil;
@@ -29,7 +29,6 @@ import cn.hutool.extra.spring.SpringUtil;
 import cn.hutool.http.HttpUtil;
 import cn.hutool.json.JSONUtil;
 import lombok.extern.slf4j.Slf4j;
-import wushuo.tmdb.api.entity.Tmdb;
 
 import java.io.File;
 import java.io.InputStream;
@@ -244,15 +243,18 @@ public class AniUtil {
             if (items.isEmpty()) {
                 return ani;
             }
-            Double offset = -(items.stream()
+
+            Double minEpisode = items.stream()
                     .map(Item::getEpisode)
                     .min(Comparator.comparingDouble(i -> i))
-                    .get() - 1);
+                    .get();
+
+            int offset = ItemsUtil.is5(minEpisode) ? -minEpisode.intValue() : -(minEpisode.intValue() - 1);
             log.debug("自动获取到剧集偏移为 {}", offset);
-            ani.setOffset(offset.intValue());
+            ani.setOffset(offset);
 
             for (StandbyRss rss : standbyRssList) {
-                rss.setOffset(offset.intValue());
+                rss.setOffset(offset);
             }
         }
         return ani;
@@ -427,55 +429,7 @@ public class AniUtil {
     }
 
     public static Ani createAni() {
-        Ani newAni = new Ani();
-        return newAni
-                .setId(UUID.randomUUID().toString())
-                .setMikanTitle("")
-                .setStandbyRssList(new ArrayList<>())
-                .setOffset(0)
-                .setReleaseDate(new DateTime())
-                .setEnable(true)
-                .setOva(false)
-                .setScore(0.0)
-                .setLastDownloadTime(0L)
-                .setImage("")
-                .setThemoviedbName("")
-                .setCustomDownloadPath(false)
-                .setCustomDownloadPathTemplate("")
-                .setGlobalExclude(false)
-                .setCurrentEpisodeNumber(0)
-                .setTotalEpisodeNumber(0)
-                .setMatch(List.of())
-                .setExclude(List.of("720[Pp]", "\\d-\\d", "合集", "特别篇"))
-                .setBgmUrl("")
-                .setSubgroup("")
-                .setCustomEpisode(CONFIG.getCustomEpisode())
-                .setCustomEpisodeStr(CONFIG.getCustomEpisodeStr())
-                .setCustomEpisodeGroupIndex(CONFIG.getCustomEpisodeGroupIndex())
-                .setOmit(true)
-                .setDownloadNew(false)
-                .setNotDownload(new ArrayList<>())
-                .setTmdb(
-                        new Tmdb()
-                                .setId("")
-                                .setName("")
-                                .setOriginalName("")
-                                .setDate(new Date())
-                )
-                .setUpload(CONFIG.getUpload())
-                .setProcrastinating(true)
-                .setCustomRenameTemplate(CONFIG.getRenameTemplate())
-                .setCustomRenameTemplateEnable(false)
-                .setCustomPriorityKeywordsEnable(false)
-                .setCustomPriorityKeywords(new ArrayList<>())
-                .setMessage(true)
-                .setCustomUploadPathTarget("")
-                .setCustomUploadEnable(false)
-                .setCompleted(true)
-                .setCustomCompleted(false)
-                .setCustomCompletedPathTemplate("")
-                .setCustomTags(new ArrayList<>())
-                .setCustomTagsEnable(false);
+        return DefaultAniFactory.create();
     }
 
 

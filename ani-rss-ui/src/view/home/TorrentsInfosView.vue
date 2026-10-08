@@ -65,26 +65,20 @@
             <p>{{ torrentsInfo.name }}</p>
             <el-progress :percentage="torrentsInfo['progress']"/>
             <div class="torrents-size-info">
-            <span>
-              <span class="torrents-size-value">{{ formatTorrentSize(torrentsInfo['completed']) }}</span>
-              /
-              <span class="torrents-size-value">{{ formatTorrentSize(torrentsInfo['size']) }}</span>
-            </span>
+              {{ formatTorrentSize(torrentsInfo['completed']) + ' / ' + formatTorrentSize(torrentsInfo['size']) }}
             </div>
-            <template #footer>
-              <div class="flex torrents-footer">
-                <div>
-                  <el-tag v-for="tag in torrentsInfo['tagList']" class="torrents-tag-spacer" type="info">
-                    {{ tag }}
-                  </el-tag>
-                </div>
-                <div>
-                  <el-tag class="torrents-tag-spacer" type="primary">
-                    {{ torrentsInfo['state'] }}
-                  </el-tag>
-                </div>
+            <div class="flex torrents-footer">
+              <div class="torrents-tags">
+                <el-tag v-for="tag in torrentsInfo['tagList']" type="info">
+                  {{ tag }}
+                </el-tag>
               </div>
-            </template>
+              <div>
+                <el-tag type="primary">
+                  {{ torrentsInfo['state'] }}
+                </el-tag>
+              </div>
+            </div>
           </el-card>
         </el-scrollbar>
       </div>
@@ -292,32 +286,22 @@ onUnmounted(pausePolling)
 }
 
 .torrents-size-info {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 4px 16px;
-  margin-top: 6px;
   font-size: 13px;
   line-height: 20px;
   font-variant-numeric: tabular-nums;
-}
-
-.torrents-size-label {
-  margin-right: 4px;
-  color: var(--el-text-color-placeholder);
-}
-
-.torrents-size-value {
   color: var(--el-text-color-regular);
 }
 
 .torrents-footer {
+  margin-top: 4px;
   width: 100%;
   justify-content: space-between;
 }
 
-.torrents-tag-spacer {
-  margin-top: 4px;
-  margin-left: 4px;
+.torrents-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
 }
 
 @media (max-width: 700px) {
