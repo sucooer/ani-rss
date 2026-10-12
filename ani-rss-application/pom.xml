@@ -5,7 +5,7 @@
     <parent>
         <groupId>ani.rss</groupId>
         <artifactId>ani-rss</artifactId>
-        <version>3.2.44</version>
+        <version>3.2.47</version>
     </parent>
 
     <artifactId>ani-rss-application</artifactId>
@@ -63,10 +63,6 @@
         <dependency>
             <groupId>com.google.code.gson</groupId>
             <artifactId>gson</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>ebml.reader</groupId>
-            <artifactId>ebml-reader</artifactId>
         </dependency>
         <dependency>
             <groupId>wushuo.tmdb.api</groupId>

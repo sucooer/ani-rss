@@ -254,7 +254,7 @@
   </div>
   <div class="flex full-width" style="justify-content: space-between;margin-top: 10px;">
     <div>
-      <el-dropdown trigger="click">
+      <el-dropdown v-if="props.editMode" trigger="click">
         <el-button bg text icon="MoreFilled">
           其他
         </el-button>
@@ -448,7 +448,10 @@ let aniBTShow = () => {
 
 let openUrl = (url) => window.open(url)
 
-let props = defineProps(['ani'])
+let props = defineProps({
+  ani: Object,
+  editMode: {type: Boolean, default: false}
+})
 const emit = defineEmits(['callback'])
 </script>
 

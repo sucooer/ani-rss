@@ -1,2 +1,2 @@
-- feat: 邮箱通知支持配置多个收件人
-- refactor: 优化下载列表
+- refactor: 彻底移除 OpenList
+- refactor: 去除封面标题 tooltip
