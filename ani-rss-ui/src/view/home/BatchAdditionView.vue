@@ -25,7 +25,7 @@
 
 <script setup>
 import {computed, ref} from 'vue'
-import {ElMessage} from 'element-plus'
+import {ElMessage, ElMessageBox} from 'element-plus'
 import * as http from '@/js/http.js'
 import AniView from './AniView.vue'
 import {aniData} from '@/js/ani.js'
@@ -60,12 +60,31 @@ const makeAni = item => {
   return ani
 }
 
+// 加载完成后补全匹配规则，避免 rssToAni 的响应覆盖批量选择结果。
+const appendMatchRules = (ani, item) => {
+  ani.match = item.sources.flatMap(value => {
+    const group = typeof value === 'string' ? JSON.parse(value) : value
+    const subgroup = group.label || group.name
+    return (group.match || []).map(rule => `{{${subgroup}}}:${rule}`)
+  })
+  return ani
+}
+
 // 单条串行解析，失败只影响当前 tab，后续任务继续执行。
 const load = async item => {
   item.status = 'loading'
   item.error = ''
   try {
-    item.ani = (await http.rssToAni(makeAni(item))).data
+    const request = item.request || makeAni(item)
+    const result = (await http.rssToAni(request)).data
+    if (item.sources?.length) {
+      item.ani = appendMatchRules(result, item)
+    } else {
+      // 手动添加沿用 AddView 中尚未参与解析的本地匹配配置。
+      result.match = request.match || result.match || []
+      result.showDownlaod = false
+      item.ani = result
+    }
     item.status = 'success'
   } catch (error) {
     item.status = 'error'
@@ -73,9 +92,9 @@ const load = async item => {
   }
 }
 
-const open = async () => {
+const open = async (items = props.items) => {
   const grouped = new Map()
-  props.items.forEach(value => {
+  items.forEach(value => {
     const source = typeof value === 'string' ? JSON.parse(value) : value
     const key = props.type === 'mikan' ? new URL(source.rss).searchParams.get('bangumiId') : source.bgmId
     if (!grouped.has(key)) grouped.set(key, [])
@@ -94,11 +113,27 @@ const open = async () => {
   for (const item of entries.value) await load(item)
 }
 
+// 手动或单条添加直接传入 RssToAniDTO，并复用相同的加载与确认流程。
+const openRequests = async requests => {
+  entries.value = requests.map((request, index) => ({
+    id: `${Date.now()}-${index}`,
+    label: request.title || request.subgroup || `订阅 ${index + 1}`,
+    request,
+    sources: [],
+    status: 'loading',
+    ani: null,
+    error: ''
+  }))
+  activeName.value = entries.value[0]?.id || ''
+  for (const item of entries.value) await load(item)
+}
+
 const retry = item => load(item)
 
 const confirmItem = async (item, done) => {
   try {
-    await http.addAni(item.ani)
+    const added = await addSubscription(item)
+    if (!added) return
     item.status = 'added'
     ElMessage.success('订阅添加成功')
     closeItem(item)
@@ -107,6 +142,27 @@ const confirmItem = async (item, done) => {
   } finally {
     done?.()
   }
+}
+
+// 首次添加禁止覆盖；检测到重复时由用户明确确认后再携带 override 重试。
+const addSubscription = async item => {
+  try {
+    await http.addAni(item.ani)
+  } catch (error) {
+    const duplicate = ['此订阅已存在', '订阅标题重复'].includes(error?.message)
+    if (!duplicate) throw error
+    try {
+      await ElMessageBox.confirm(
+          `订阅“${item.ani.title}”已存在，是否覆盖原订阅？`,
+          '订阅重复',
+          {confirmButtonText: '覆盖', cancelButtonText: '取消', type: 'warning'}
+      )
+    } catch {
+      return false
+    }
+    await http.addAni(item.ani, true)
+  }
+  return true
 }
 
 const closeItem = item => {
@@ -123,7 +179,7 @@ const closeItemById = id => {
   if (item) closeItem(item)
 }
 
-defineExpose({open})
+defineExpose({open, openRequests})
 </script>
 
 <style scoped>

@@ -1,2 +1,2 @@
-- refactor: 彻底移除 OpenList
-- refactor: 去除封面标题 tooltip
+- fix: 修复编辑订阅回填问题
+- fix: 修复首页编辑订阅错误
