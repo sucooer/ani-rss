@@ -6,7 +6,7 @@
     <parent>
         <groupId>ani.rss</groupId>
         <artifactId>ani-rss</artifactId>
-        <version>3.2.52</version>
+        <version>3.2.53</version>
     </parent>
 
     <artifactId>ani-rss-ui</artifactId>
@@ -43,8 +43,8 @@
                             <goal>install-node-and-pnpm</goal>
                         </goals>
                         <configuration>
-                            <nodeVersion>v26.11.0</nodeVersion>
-                            <pnpmVersion>12.10.1</pnpmVersion>
+                            <nodeVersion>v26.12.1</nodeVersion>
+                            <pnpmVersion>12.15.0</pnpmVersion>
                         </configuration>
                     </execution>
                     <execution>
@@ -54,7 +54,7 @@
                         </goals>
                         <phase>generate-resources</phase>
                         <configuration>
-                            <arguments>install</arguments>
+                            <arguments>install --frozen-lockfile</arguments>
                             <environmentVariables>
                                 <CI>true</CI>
                             </environmentVariables>
