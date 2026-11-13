@@ -296,6 +296,30 @@ public class NotificationConfig implements Serializable {
     private Integer barkVolume;
 
     /**
+     * AstrBot 服务地址
+     */
+    @Schema(description = "AstrBot 服务地址")
+    private String astrBotHost;
+
+    /**
+     * AstrBot OpenAPI 密钥，发送图片时还需要 file 权限
+     */
+    @Schema(description = "AstrBot OpenAPI 密钥")
+    private String astrBotApiKey;
+
+    /**
+     * AstrBot 目标会话的统一消息来源标识
+     */
+    @Schema(description = "AstrBot 目标 UMO")
+    private String astrBotUmo;
+
+    /**
+     * AstrBot 是否附带番剧封面
+     */
+    @Schema(description = "AstrBot 发送图片")
+    private Boolean astrBotImage;
+
+    /**
      * 通知 状态
      */
     @Schema(description = "通知状态")
@@ -307,6 +331,11 @@ public class NotificationConfig implements Serializable {
     @Schema(description = "顺序")
     private Long sort;
 
+    /**
+     * 创建默认通知配置，同时用于补齐旧配置中缺失的字段。
+     *
+     * @return 默认通知配置
+     */
     public static NotificationConfig createNotificationConfig() {
         NotificationConfig notificationConfig = new NotificationConfig();
 
@@ -394,6 +423,13 @@ public class NotificationConfig implements Serializable {
                 .setBarkUseMarkdown(false)
                 .setBarkLevel("active")
                 .setBarkVolume(5);
+
+        // AstrBot，密钥和目标会话由用户填写。
+        notificationConfig
+                .setAstrBotHost("http://127.0.0.1:6185")
+                .setAstrBotApiKey("")
+                .setAstrBotUmo("")
+                .setAstrBotImage(true);
 
         return notificationConfig;
     }
