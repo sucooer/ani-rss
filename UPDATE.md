@@ -1,1 +1,1 @@
-- feat: 增加 AstrBot 通知
+- refactor: 优化播放器加载
