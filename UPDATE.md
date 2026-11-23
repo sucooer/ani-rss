@@ -1,5 +1,6 @@
 - feat: 增加修改默认登录信息提示
 - build: 更新依赖
+- build: 更新 docker 基础镜像以处理 `CVE-2026-114938`
 - refactor: 优化通知管理页面
 - fix: 修复安装脚本错误 Close #748
 - refactor: 优化播放器加载
